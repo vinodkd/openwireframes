@@ -1,0 +1,52 @@
+def:
+  LoremText:
+    container: no
+    slots: {text: "Lorem Ipsum blah blah", id:unknown}
+    ui: >
+       <span id=\"{{id}}\">{{text}}</span>
+    css: >
+      #{{id}} {width:100%; float:left}
+
+  # container widget
+  List:
+    container: yes
+    #slots are for container-level values, not children
+    slots: {values: [text1,text2]}
+    ui : !!js/function >
+      function f(){
+       var out = "";
+       for(var value in slots.values) {
+         out += "<div>"+ value + "</div>";
+       }
+       return out;
+      }
+
+  TITLE:
+    container: no
+    slots: {text: "Your Title Here"}
+    ui: >
+       <h1>{{text}}</span>
+    css: >
+      #{{id}} {width:100%; float:left}
+
+ui:
+  is: 2ROW
+  has: [header,body]
+  header:
+      is: TITLE
+      text: Open Wireframes Demo
+  body:
+      is: 3COLUMN
+      has: [source,goButton,dest]
+      source:
+          is: TEXTAREA
+          width: 49%
+          height: 100%
+          text: "Enter owf source here"
+      goButton:
+        is: BUTTON 
+        text: Go
+      dest:
+        is: DIV 
+        width: 49%
+        height: 100%
