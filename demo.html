@@ -30,7 +30,30 @@
 <body>
 	<h1>Open Wireframes Demo</h1>
 	<div id="src">
-		<textarea id="srcTxt">Type owf source here</textarea>
+		<textarea id="srcTxt">
+ui:
+  is: 2ROW
+  has: [header,body]
+  header:
+      is: TITLE
+      text: Open Wireframes Demo
+  body:
+      is: 3COLUMN
+      has: [source,goButton,dest]
+      source:
+          is: TEXTAREA
+          width: 49%
+          height: 100%
+          text: "Enter owf source here"
+      goButton:
+        is: BUTTON 
+        text: Go
+      dest:
+        is: DIV 
+        width: 49%
+        height: 100%
+
+		</textarea>
 	</div>
 	<input type=button value="Go" onclick="go()"/>
 	<div id="dst">
