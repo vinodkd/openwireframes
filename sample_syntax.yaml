@@ -50,3 +50,27 @@ ui:
         is: DIV 
         width: 49%
         height: 100%
+
+name: testui
+type: tworows
+has:
+  - name: header
+    type: title
+    value: Open Wireframes Demo
+  - name: body
+    type: threecolumns
+    has:
+      - name: source
+        type: textarea
+        width: 49%
+        height: 100%
+        value: "Enter owf source here"
+      - name: goButton
+        is: button 
+        value: Go
+      - name: dest
+        type: textarea
+        width: 49%
+        height: 100%
+        value: "See result here"
+
