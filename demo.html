@@ -10,10 +10,16 @@
 			var src=document.getElementById("srcTxt");
 			var dstTxt=document.getElementById("dstTxt");
 			var dstFrame=document.getElementById("dstFrame");
-			var ast=jsyaml.load(src.value);
-			// dst.value = jsyaml.dump(ast);
-			dstTxt.value = JSON.stringify(ast);
-			dstFrame.contentDocument.body.innerHTML = owf.view.render(ast.ui);
+			var view;
+			try{
+				var ast=jsyaml.load(src.value);
+				// dst.value = jsyaml.dump(ast);
+				// dstTxt.value = JSON.stringify(ast);
+				view = owf.render(ast,true);
+			}catch(e){
+				view = e + '<br/>' +e.stack.replace('\n','<br/>');
+			}
+			dstFrame.contentDocument.body.innerHTML = view;
 		}
 
 	</script>
@@ -31,28 +37,28 @@
 	<h1>Open Wireframes Demo</h1>
 	<div id="src">
 		<textarea id="srcTxt">
-ui:
-  is: 2ROW
-  has: [header,body]
-  header:
-      is: TITLE
-      text: Open Wireframes Demo
-  body:
-      is: 3COLUMN
-      has: [source,goButton,dest]
-      source:
-          is: TEXTAREA
-          width: 49%
-          height: 100%
-          text: "Enter owf source here"
-      goButton:
-        is: BUTTON 
-        text: Go
-      dest:
-        is: DIV 
-        width: 49%
+name: testui
+type: rows
+has:
+  - name: header
+    type: title
+    value: Open Wireframes Demo
+    height: 30%
+  - name: body
+    type: cols
+    has:
+      - name: source
+        type: textarea
+        width: 30%
         height: 100%
-
+        value: "Enter owf source here"
+      - name: goButton
+        type: button 
+        value: Go
+      - name: dest
+        type: textarea
+        width: 65%
+        value: "See result here"
 		</textarea>
 	</div>
 	<input type=button value="Go" onclick="go()"/>
