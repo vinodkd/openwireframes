@@ -79,11 +79,7 @@ var owf = {
 		}
 	},
 	container: {
-		// renders a container, which is defined by
-		// * a kind
-		// * a view for the container itself
-		// * contents array of views for each slot in its contents.
-
+		// renders a container, which is defined by rules in shape library
 		render: function (ast) {
 			var shape = owf.shapes[ast.type];
 			if(shape.kind != 'container')
@@ -153,6 +149,22 @@ var owf = {
 	// 			- overall html markup
 	// 			- setting up the global css styles for boxes and fonts
 	//		Default: false
+	//
+	// Rules for container
+	// kind: required. Same as above
+	// view: required. string or function as above. 
+	// 		if string, must use the strings `${content}` and `${shape}` somewhere. The former marks the place where
+	// 			the children are placed and the latter is as above.
+	// 		if function, should handle rendering of entire shape. May use the contents field or not, but if it *is*
+	// 			used, then must follow rules below.
+	// contents: required. Can be and array or a single value.
+	// 	 	if array, the array can be made of strings or functions. The number of `has` items in the instance must
+	// 			match this array size. If strings are supplied, the default logic is used, which delegates to  the 
+	//			default widget logic. If functions are supplied, they are run.
+	// 		if single value, it can be a single string or a single function. The string or function is applied to
+	// 			every value in the instance's `has` element.
+	// 		Default: array of strings.
+
 	shapes: {
 		text: {
 			kind: 'widget',
