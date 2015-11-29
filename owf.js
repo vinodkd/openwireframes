@@ -88,8 +88,6 @@ var owf = {
 			var shape = owf.shapes[ast.type];
 			if(shape.kind != 'container')
 				throw 'container.render renders only containers.' + ast.type + 'has a different kind';
-			if(shape.contents == null)
-				throw 'container ' + ast.type + 'doesnt have any contents. needs redefinition'
 			if(ast.has == null)
 				throw ast.name + ' needs a "has" attribute to use ' + ast.type
 			var view;
@@ -100,13 +98,26 @@ var owf = {
 			return view;
 		},
 		defaultView: function (shape,ast) {
-			if(ast.has.length != shape.contents.length)
-				throw ast.name + ' has ' + ast.has.length + ' contents, needs ' +shape.contents.length+ 'to use ' + ast.type
 			var childrenView = '';
-			for(var c in shape.contents){
+			var contentShapes;
+			if(typeof shape.contents == 'string' || typeof shape.contents == 'function'){
+				var repeatedContents = new Array();
+				for(var i in ast.has){
+					repeatedContents.push(shape.contents);
+				}
+				contentShapes = repeatedContents;
+			}else{
+				if(shape.contents == null)
+					throw 'container ' + ast.type + 'doesnt have any contents. needs redefinition'
+				if(ast.has.length != shape.contents.length)
+					throw ast.name + ' has ' + ast.has.length + ' contents, needs ' +shape.contents.length+ ' to use ' + ast.type
+				contentShapes = shape.contents;
+			}
+
+			for(var c in contentShapes){
 				var child = ast.has[c];
 				var childView = owf.render(child);
-				var childShape = shape.contents[c];
+				var childShape = contentShapes[c];
 
 				if(typeof(childShape) == 'string')
 					childrenView += owf.container.defaultChildView(childShape, childView);
@@ -182,8 +193,8 @@ var owf = {
 	// That is, the combos are:
 	// - str, str array: default
 	// - str, fn array: can be processed by default logic
-	// - str, single str: can be processed by default logic - TBD
-	// - str, single fn: can be processed by default logic - TBD
+	// - str, single str: can be processed by default logic
+	// - str, single fn: can be processed by default logic
 	// - fn, str array: should be handled by fn.
 	// - fn, fn array: should be handled by fn.
 	// - fn, single str: should be handled by fn.
