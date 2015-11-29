@@ -10,14 +10,14 @@
 			var src=document.getElementById("srcTxt");
 			var dstTxt=document.getElementById("dstTxt");
 			var dstFrame=document.getElementById("dstFrame");
-			var ast=jsyaml.load(src.value);
-			// dst.value = jsyaml.dump(ast);
-			// dstTxt.value = JSON.stringify(ast);
 			var view;
 			try{
-				view = owf.render(ast);
+				var ast=jsyaml.load(src.value);
+				// dst.value = jsyaml.dump(ast);
+				// dstTxt.value = JSON.stringify(ast);
+				view = owf.render(ast,true);
 			}catch(e){
-				view = e;
+				view = e + '<br/>' +e.stack.replace('\n','<br/>');
 			}
 			dstFrame.contentDocument.body.innerHTML = view;
 		}
