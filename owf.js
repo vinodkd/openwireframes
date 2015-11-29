@@ -37,15 +37,7 @@ var owf = {
 	widget: {
 		// renders a widget by returning a string containing its view in html
 		// expects the ast.type to map to a known type of shape
-		// each shape type should have
-		//   * a kind
-		//   * slots, which are values into which instances can provide data.
-		//     * if none are specified, a single slot called value is used by default.
-		//   * a view which can be a string or a function
-		//     * if its a string, render uses defaultView to interpolate values in the string using ${} notation.
-		//     * if its a function, render expectes it to be of type fn(shape,ast) returns string. [TBD]
-		//   * border: true: denotes a widget that needs a border to be drawn.
-		//   * root: true/false: denotes that a widget is the root widget and doesnt need to be wrapped.
+		// see below for rules
 
 		// a widget instance should have a name, the type and slot nv pairs
 
@@ -61,6 +53,8 @@ var owf = {
 				shape.slots = {'value': ''};
 			var view = shape.view;
 			for(var s in shape.slots){
+				if(s == 'width' || s == 'height')
+					continue;
 				var val = ast[s];
 				if(val == undefined)
 					val = shape.slots[s];
@@ -69,10 +63,16 @@ var owf = {
 				view = view.replace('${' + s + '}', val);
 			}
 			// handle style now
-			var style = '';
-			if(shape.style != undefined){
-				style = 'style="'+shape.style+'"'
-			}
+			var style = 'style="' + ((shape.style != undefined && shape.style != '') ? shape.style + ';' : '');
+			var width = ast['width'];
+			if(width && (width != undefined || width != ''))
+				width = '100%';
+			var height = ast['height'];
+			if(height && (height != undefined || height != ''))
+				height = '100%';
+
+			style += 'width:'+width+';height:'+height+';';
+			style += '"'
 			style = 'class="'+ (shape.hasBorder? 'lofibox' : '')  +'" ' + style;
 			view = view.replace('${style}', style);
 			return view;
@@ -128,6 +128,31 @@ var owf = {
 			
 		}
 	},
+	// rules for shapes:
+	// kind: required. One of widget, container, state or app
+	// slots: optional.array of name-value pairs. Names are used to map from the instance. Values are default values
+	// 		Default: if there's only one value, skip defining it and owf will use a single slot called 'value'
+	// view: required.string or function.
+	// 		If string, should have ${} delimited names from slots for replacement.
+	//			In addition, the string should have a '${shape}' string in the appropriate place 
+	// 			that stands for *both* the class attribute and the style attribute of the generated element.
+	// 			owf replaces this string with: `class = "..." style = "..."`
+	// 		if function, should have signature str=fn(shape,ast) where
+	//			str = returned string containing html view in a div
+	//			shape = shape definition passed in by owf
+	//			ast = part of the instance's ast parsed by owf and passed into the function.
+	// style: optional. css styles appled to the instance's view. Default: empty string.
+	// width and height: optional. dimensions supplied separately from slots in the shape definition, 
+	// 					but supplied along with other slot values in the instance. owf will take these values
+	// 					and add them to the style attribute. html width and height attributes are not used.
+	// 		Default: 100% or 99% for all elements.
+	// border: optional. true denotes a widget that needs a border to be drawn. owf will then draw a lo-fi border
+	//		Default: false
+	// root: optional. true denotes that a widget is the root widget and doesnt need to be wrapped in std markup
+	// 		only shapes of kind 'app' are expected to have this field and their view function is expected to handle:
+	// 			- overall html markup
+	// 			- setting up the global css styles for boxes and fonts
+	//		Default: false
 	shapes: {
 		text: {
 			kind: 'widget',
