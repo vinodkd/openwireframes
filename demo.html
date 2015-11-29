@@ -13,7 +13,13 @@
 			var ast=jsyaml.load(src.value);
 			// dst.value = jsyaml.dump(ast);
 			// dstTxt.value = JSON.stringify(ast);
-			dstFrame.contentDocument.body.innerHTML = owf.render(ast);
+			var view;
+			try{
+				view = owf.render(ast);
+			}catch(e){
+				view = e;
+			}
+			dstFrame.contentDocument.body.innerHTML = view;
 		}
 
 	</script>

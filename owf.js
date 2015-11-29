@@ -5,10 +5,10 @@ var owf = {
 		if(name == null)
 			throw 'name cannot be null';
 		if(typeName == null)
-			throw name + 'needs a type';
+			throw 'Type needed for: ' + name;
 		var type = owf.shapes[typeName];
 		if(type == null)
-			throw name + '\'s type -' + type + '- is unknown';
+			throw 'Shape '+ name + ' has an unknown type:' + typeName;
 		var view = owf[type.kind].render(ast);
 		if(type.isRoot)
 			return view;
