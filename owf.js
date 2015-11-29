@@ -176,6 +176,18 @@ var owf = {
 	// 		if single value, it can be a single string or a single function. The string or function is applied to
 	// 			every value in the instance's `has` element.
 	// 		Default: array of strings.
+	// combos possible across view and contents, therefore:
+	// view 		contents
+	//	string/fn 	str array/fn array/single str/single fn
+	// That is, the combos are:
+	// - str, str array: default
+	// - str, fn array: can be processed by default logic
+	// - str, single str: can be processed by default logic - TBD
+	// - str, single fn: can be processed by default logic - TBD
+	// - fn, str array: should be handled by fn.
+	// - fn, fn array: should be handled by fn.
+	// - fn, single str: should be handled by fn.
+	// - fn, single fn: should be handled by fn.
 
 	shapes: {
 		text: {
