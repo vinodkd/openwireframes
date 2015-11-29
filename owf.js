@@ -1,6 +1,6 @@
 // owf2.js
 var owf = {
-	render: function (ast) {
+	render: function (ast,wrap) {
 		var name = ast['name'], typeName = ast['type'];
 		if(name == null)
 			throw 'name cannot be null';
@@ -10,28 +10,29 @@ var owf = {
 		if(type == null)
 			throw 'Shape '+ name + ' has an unknown type:' + typeName;
 		var view = owf[type.kind].render(ast);
-		if(type.isRoot)
-			return view;
-		else
+		if(wrap == undefined)
+			wrap = false;
+		if(wrap)
 			return owf.wrapView(view);
+		else
+			return view;
 	},
 	wrapView : function (view) {
-		var wview = '<html>'
-			+ '<head>'
+		var wview = '<head>'
 			+ '	<title></title>'
 			+ '	<style type="text/css">'
 			+ '	* {'
 			+ '		font-family: "Comic Sans MS";'
-			+ '	}'
+			+ '	} '
 			+ '	.lofibox {'
 			+ '		border-image: url(boxbg.png) 25 25 25 25; border-style: solid;'
 			+ '		border-width: 0.5em;'
 			+ '	}'
 			+ '	</style>'
+			+ '</head>'
 			+ '<body>'
 			+ view
-			+ '</body>'
-			+ '</html>';
+			+ '</body>';
 		return wview;
 	},
 	widget: {
@@ -166,11 +167,6 @@ var owf = {
 	// 					and add them to the style attribute. html width and height attributes are not used.
 	// 		Default: 100% or 99% for all elements.
 	// border: optional. true denotes a widget that needs a border to be drawn. owf will then draw a lo-fi border
-	//		Default: false
-	// root: optional. true denotes that a widget is the root widget and doesnt need to be wrapped in std markup
-	// 		only shapes of kind 'app' are expected to have this field and their view function is expected to handle:
-	// 			- overall html markup
-	// 			- setting up the global css styles for boxes and fonts
 	//		Default: false
 	//
 	// Rules for container
