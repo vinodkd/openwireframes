@@ -92,18 +92,26 @@ var owf = {
 				throw 'container ' + ast.type + 'doesnt have any contents. needs redefinition'
 			if(ast.has == null)
 				throw ast.name + ' needs a "has" attribute to use ' + ast.type
-			if(ast.has.length != shape.contents.length)
-				throw ast.name + ' has ' + ast.has.length + ' contents, needs ' +shape.contents.length+ 'to use ' + ast.type
-
-			var view = owf.container.defaultView(shape,ast);
+			var view;
+			if(typeof(shape.view) == 'string')
+				view = owf.container.defaultView(shape,ast);
+			else if(typeof(shape.view) == 'function')
+				view = shape.view(shape,ast);
 			return view;
 		},
 		defaultView: function (shape,ast) {
+			if(ast.has.length != shape.contents.length)
+				throw ast.name + ' has ' + ast.has.length + ' contents, needs ' +shape.contents.length+ 'to use ' + ast.type
 			var childrenView = '';
 			for(var c in shape.contents){
 				var child = ast.has[c];
 				var childView = owf.render(child);
-				childrenView += owf.container.defaultChildView(shape.contents[c], childView);
+				var childShape = shape.contents[c];
+
+				if(typeof(childShape) == 'string')
+					childrenView += owf.container.defaultChildView(childShape, childView);
+				else if(typeof(childShape.view) == 'function')
+					childrenView += childShape(childView);
 			}
 			var view = shape.view.replace('${content}',childrenView);
 			// handle style now
