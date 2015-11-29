@@ -248,5 +248,60 @@ var owf = {
 			view: '<div ${style}>${content}</div>',
 			contents: ['<div style="width:100%;height:49%">${value}</div>','<div style="width:100%;height:49%">${value}</div>'],
 		},
+		rows: {
+			kind: 'container',
+			hasBorder: true,
+			view: function (shape,ast) {
+				var view = '';
+				var childCount = ast.has.length;
+				var height = 100 / childCount;
+				var overrideHeight = false;
+				for(var i in ast.has){
+					var child = ast.has[i];
+					var ithHeight = child.height;
+					if(ithHeight && (ithHeight != '' || ithHeight != undefined)){
+						// set child height to 100 and override parent div's height from child
+						child.height = '100%';
+						if(!child.width || child.width == '')
+							child.width = '100%';
+						overrideHeight = true;
+					}
+					var childView = owf.render(child);
+
+					view += '<div style="width:100%;height:'+(overrideHeight? ithHeight : Math.floor(height)+'%')+ '">'+childView+'</div>';
+				}
+				// view = '<div ${style}>'+view+'</div>';
+				view = '<div class="rows">'+view+'</div>';
+				return view;
+			}
+		},
+		cols: {
+			kind: 'container',
+			hasBorder: true,
+			view: function (shape,ast) {
+				var view = '';
+				var childCount = ast.has.length;
+				var width = 100 / childCount;
+				var overrideWidth = false;
+				for(var i in ast.has){
+					var child = ast.has[i];
+					var ithWidth = child.width;
+					if(ithWidth && (ithWidth != '' || ithWidth != undefined)){
+						// set child height to 100 and override parent div's height from child
+						child.width = '100%';
+						if(!child.height || child.height == '')
+							child.height = '100%';
+						overrideWidth = true;
+					}
+					var childView = owf.render(child);
+
+					var fltspec = 'float:' + ((i < (ast.has.length-1)) ? 'left;' : 'right;');
+					view += '<div style="'+fltspec+'height:100%;width:'+(overrideWidth? ithWidth : Math.floor(ithWidth)+'%')+ '">'+childView+'</div>';
+				}
+				// view = '<div ${style}>'+view+'</div>';
+				view = '<div class="cols">'+view+'</div>';
+				return view;
+			}
+		},
 	}
 }
