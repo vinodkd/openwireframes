@@ -45,7 +45,11 @@ var owf = {
 			var shape = owf.shapes[ast.type];
 			if(shape.kind != 'widget')
 				throw 'widget.render renders only widgets.' + ast.type + 'has a different kind';
-			var view = owf.widget.defaultView(shape,ast);
+			var view;
+			if(typeof(shape.view) == 'string') 
+				view = owf.widget.defaultView(shape,ast);
+			else if(typeof(shape.view) == 'function')
+				view = shape.view(shape,ast);
 			return view;
 		},
 		defaultView: function (shape,ast) {
